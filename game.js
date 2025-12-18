@@ -1,29 +1,53 @@
-// 贪吃蛇游戏主逻辑
+// 贪吃蛇游戏主逻辑 - 支持难度调节
 // Author: Cat Uncle's Dev Studio
-// Version: 1.0
+// Version: v1.1 (with difficulty)
+// Developed with: Claude Code + 小米 MiMo
 
 class Game {
     constructor() {
         // Canvas 设置
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
-        this.gridSize = 20; // 每个格子大小
-        this.gridCount = 30; // 每行/列格子数量
+        this.gridSize = 20;
+        this.gridCount = 30;
+
+        // 难度配置系统
+        this.difficultyConfig = {
+            easy: {
+                name: '简单',
+                baseSpeed: 180,  // 较慢
+                speedIncrement: 8, // 减速幅度小
+                emoji: '😊'
+            },
+            normal: {
+                name: '普通',
+                baseSpeed: 150,
+                speedIncrement: 10,
+                emoji: '😐'
+            },
+            hard: {
+                name: '困难',
+                baseSpeed: 120,  // 更快
+                speedIncrement: 12, // 减速幅度大
+                emoji: '😈'
+            }
+        };
 
         // 游戏状态
         this.isPlaying = false;
         this.isPaused = false;
         this.isGameOver = false;
+        this.currentDifficulty = 'normal'; // 默认普通
 
         // 游戏数据
         this.snake = [];
-        this.direction = { x: 1, y: 0 }; // 默认向右移动
+        this.direction = { x: 1, y: 0 };
         this.nextDirection = { x: 1, y: 0 };
         this.food = {};
         this.score = 0;
         this.highScore = this.loadHighScore();
-        this.speed = 150; // 初始速度（ms）
-        this.baseSpeed = 150;
+        this.speed = this.difficultyConfig[this.currentDifficulty].baseSpeed;
+        this.startingSpeed = this.speed;
 
         // 游戏循环
         this.gameLoop = null;
@@ -36,7 +60,9 @@ class Game {
             statusMessage: document.getElementById('statusMessage'),
             startBtn: document.getElementById('startBtn'),
             pauseBtn: document.getElementById('pauseBtn'),
-            restartBtn: document.getElementById('restartBtn')
+            restartBtn: document.getElementById('restartBtn'),
+            currentDifficulty: document.getElementById('currentDifficulty'),
+            diffButtons: document.querySelectorAll('.diff-btn')
         };
 
         this.init();
@@ -49,13 +75,14 @@ class Game {
 
         // 更新显示
         this.elements.highScore.textContent = this.highScore;
+        this.updateDifficultyDisplay();
 
         // 绑定事件
         this.bindEvents();
 
-        // 初始化绘制（准备界面）
+        // 初始化绘制
         this.draw();
-        this.showMessage('准备开始', 'normal');
+        this.showMessage('选择难度后开始', 'normal');
     }
 
     bindEvents() {
@@ -63,6 +90,14 @@ class Game {
         this.elements.startBtn.addEventListener('click', () => this.startGame());
         this.elements.pauseBtn.addEventListener('click', () => this.togglePause());
         this.elements.restartBtn.addEventListener('click', () => this.restartGame());
+
+        // 难度选择按钮
+        this.elements.diffButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const level = e.currentTarget.dataset.level;
+                this.selectDifficulty(level);
+            });
+        });
 
         // 键盘事件
         document.addEventListener('keydown', (e) => this.handleKeyPress(e));
@@ -73,6 +108,43 @@ class Game {
                 e.preventDefault();
             }
         });
+    }
+
+    selectDifficulty(level) {
+        if (this.isPlaying && !this.isGameOver) {
+            alert('⚠️ 游戏进行中不能切换难度！请先暂停或结束当前游戏。');
+            return;
+        }
+
+        this.currentDifficulty = level;
+
+        // 更新按钮状态
+        this.elements.diffButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.level === level) {
+                btn.classList.add('active');
+            }
+        });
+
+        // 更新显示
+        this.updateDifficultyDisplay(true);
+
+        // 重置速度
+        this.speed = this.difficultyConfig[level].baseSpeed;
+        this.startingSpeed = this.speed;
+
+        this.showMessage(`${this.difficultyConfig[level].emoji} 已选择 ${this.difficultyConfig[level].name}难度`, 'normal');
+    }
+
+    updateDifficultyDisplay(highlight = false) {
+        const config = this.difficultyConfig[this.currentDifficulty];
+        const display = this.elements.currentDifficulty;
+        display.textContent = `当前: ${config.name}`;
+
+        if (highlight) {
+            display.classList.add('highlight');
+            setTimeout(() => display.classList.remove('highlight'), 500);
+        }
     }
 
     handleKeyPress(e) {
@@ -134,6 +206,9 @@ class Game {
     startGame() {
         if (this.isPlaying) return;
 
+        // 检查是否已选择难度
+        const config = this.difficultyConfig[this.currentDifficulty];
+
         // 初始化蛇 - 从中间开始，长度为3
         const startX = Math.floor(this.gridCount / 2);
         const startY = Math.floor(this.gridCount / 2);
@@ -147,15 +222,19 @@ class Game {
         this.direction = { x: 1, y: 0 };
         this.nextDirection = { x: 1, y: 0 };
         this.score = 0;
-        this.speed = this.baseSpeed;
+        this.speed = config.baseSpeed;
+        this.startingSpeed = this.speed;
         this.isGameOver = false;
         this.isPaused = false;
         this.isPlaying = true;
 
         this.spawnFood();
         this.updateScore(0);
-        this.showMessage('游戏中', 'normal');
+        this.showMessage(`游戏中 - ${config.emoji} ${config.name}`, 'normal');
         this.updateButtons();
+
+        // 禁用难度选择
+        this.elements.diffButtons.forEach(btn => btn.disabled = true);
 
         // 启动游戏循环
         this.lastUpdateTime = Date.now();
@@ -340,6 +419,8 @@ class Game {
     }
 
     drawGameOverOverlay() {
+        const config = this.difficultyConfig[this.currentDifficulty];
+
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -349,19 +430,20 @@ class Game {
         this.ctx.textBaseline = 'middle';
         this.ctx.fillText('游戏结束', this.canvas.width / 2, this.canvas.height / 2 - 40);
 
-        this.ctx.font = '24px sans-serif';
+        this.ctx.font = '22px sans-serif';
         this.ctx.fillStyle = '#fff';
-        this.ctx.fillText(`得分: ${this.score}`, this.canvas.width / 2, this.canvas.height / 2 + 10);
+        this.ctx.fillText(`${config.emoji} ${config.name}难度`, this.canvas.width / 2, this.canvas.height / 2 - 5);
+        this.ctx.fillText(`得分: ${this.score}`, this.canvas.width / 2, this.canvas.height / 2 + 25);
 
         if (this.score === this.highScore && this.score > 0) {
             this.ctx.font = '20px sans-serif';
             this.ctx.fillStyle = '#fbbf24';
-            this.ctx.fillText('🎉 新纪录!', this.canvas.width / 2, this.canvas.height / 2 + 45);
+            this.ctx.fillText('🎉 新纪录!', this.canvas.width / 2, this.canvas.height / 2 + 60);
         }
 
         this.ctx.font = '16px sans-serif';
         this.ctx.fillStyle = '#aaa';
-        this.ctx.fillText('按 R 重新开始', this.canvas.width / 2, this.canvas.height / 2 + 80);
+        this.ctx.fillText('按 R 重新开始', this.canvas.width / 2, this.canvas.height / 2 + 90);
     }
 
     // 辅助方法：绘制圆角矩形
@@ -404,10 +486,14 @@ class Game {
     }
 
     increaseSpeed() {
-        // 每50分增加一次速度
+        const config = this.difficultyConfig[this.currentDifficulty];
+        // 每50分增加一次速度，但不会超过最小速度限制
         const level = Math.floor(this.score / 50);
-        const newSpeed = this.baseSpeed - (level * 10);
-        this.speed = Math.max(50, newSpeed); // 最小速度50ms
+        const newSpeed = this.startingSpeed - (level * config.speedIncrement);
+
+        // 根据难度设置最小速度限制
+        const minSpeed = config.baseSpeed * 0.5; // 比基础速度快一倍
+        this.speed = Math.max(minSpeed, newSpeed);
     }
 
     updateScore(score) {
@@ -433,12 +519,14 @@ class Game {
         this.isPaused = !this.isPaused;
 
         if (this.isPaused) {
-            this.showMessage('已暂停', 'pause');
+            const config = this.difficultyConfig[this.currentDifficulty];
+            this.showMessage(`已暂停 - ${config.emoji} ${config.name}`, 'pause');
             this.elements.pauseBtn.textContent = '继续';
             this.elements.pauseBtn.style.display = 'block';
             this.elements.startBtn.style.display = 'none';
         } else {
-            this.showMessage('游戏中', 'normal');
+            const config = this.difficultyConfig[this.currentDifficulty];
+            this.showMessage(`游戏中 - ${config.emoji} ${config.name}`, 'normal');
             this.elements.pauseBtn.textContent = '暂停';
         }
 
@@ -456,11 +544,18 @@ class Game {
         this.snake = [];
         this.food = {};
         this.score = 0;
-        this.speed = this.baseSpeed;
+
+        const config = this.difficultyConfig[this.currentDifficulty];
+        this.speed = config.baseSpeed;
+        this.startingSpeed = this.speed;
 
         this.updateScore(0);
         this.updateButtons();
-        this.showMessage('准备开始', 'normal');
+        this.showMessage('选择难度后开始', 'normal');
+
+        // 启用难度选择
+        this.elements.diffButtons.forEach(btn => btn.disabled = false);
+
         this.draw();
     }
 
@@ -470,7 +565,11 @@ class Game {
         this.playSound('crash');
         this.showMessage(message, 'error');
         this.updateButtons();
-        this.draw(); // 显示游戏结束画面
+
+        // 启用难度选择
+        this.elements.diffButtons.forEach(btn => btn.disabled = false);
+
+        this.draw();
     }
 
     showMessage(text, type = 'normal') {
@@ -511,17 +610,26 @@ class Game {
 
     // 本地存储
     saveHighScore() {
+        // 按难度分别记录高分
+        const key = `snake_high_score_${this.currentDifficulty}`;
         try {
-            localStorage.setItem('snake_high_score', this.highScore.toString());
+            localStorage.setItem(key, this.highScore.toString());
         } catch (e) {
             console.warn('无法保存最高分到本地存储:', e);
         }
     }
 
     loadHighScore() {
+        // 尝试加载当前难度的高分，如果没有则返回通用高分
+        const key = `snake_high_score_${this.currentDifficulty}`;
         try {
-            const saved = localStorage.getItem('snake_high_score');
-            return saved ? parseInt(saved) : 0;
+            const saved = localStorage.getItem(key);
+            if (saved) {
+                return parseInt(saved);
+            }
+            // 向后兼容：检查通用高分
+            const oldSaved = localStorage.getItem('snake_high_score');
+            return oldSaved ? parseInt(oldSaved) : 0;
         } catch (e) {
             console.warn('无法从本地存储加载最高分:', e);
             return 0;

@@ -15,6 +15,16 @@
 
         <div class="game-wrapper">
             <div class="side-panel">
+                <div class="difficulty-panel">
+                    <h3>🎯 难度选择</h3>
+                    <div class="difficulty-buttons">
+                        <button class="diff-btn" data-level="easy">😊 简单<br><small>90ms</small></button>
+                        <button class="diff-btn active" data-level="normal">😐 普通<br><small>150ms</small></button>
+                        <button class="diff-btn" data-level="hard">😈 困难<br><small>200ms</small></button>
+                    </div>
+                    <div id="currentDifficulty" class="difficulty-display">当前: 普通</div>
+                </div>
+
                 <div class="score-panel">
                     <h3>当前分数</h3>
                     <div id="currentScore" class="score-display">0</div>
@@ -35,7 +45,7 @@
                 </div>
 
                 <div class="game-status">
-                    <div id="statusMessage" class="status-text">准备开始</div>
+                    <div id="statusMessage" class="status-text">选择难度后开始</div>
                     <button id="startBtn" class="btn start">开始游戏</button>
                     <button id="pauseBtn" class="btn pause" style="display:none;">继续</button>
                     <button id="restartBtn" class="btn restart" style="display:none;">重新开始</button>

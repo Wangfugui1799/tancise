@@ -5,6 +5,77 @@
     box-sizing: border-box;
 }
 
+/* 难度选择样式 */
+.difficulty-panel {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.difficulty-panel h3 {
+    color: #4ade80;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.difficulty-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.diff-btn {
+    flex: 1;
+    padding: 8px 4px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.diff-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.diff-btn.active {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: #1a1a2e;
+    border-color: #4ade80;
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.5);
+}
+
+.diff-btn small {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    font-weight: normal;
+}
+
+.difficulty-display {
+    text-align: center;
+    color: #a0a0a0;
+    font-size: 0.85rem;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 8px;
+}
+
+/* 强调难度显示 */
+.difficulty-display.highlight {
+    color: #4ade80;
+    font-weight: bold;
+    animation: pulse 0.5s ease;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
