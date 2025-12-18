@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贪吃蛇游戏 - Snake Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐍 贪吃蛇游戏</h1>
+            <p class="subtitle">使用方向键或 WASD 控制</p>
+        </header>
+
+        <div class="game-wrapper">
+            <div class="side-panel">
+                <div class="score-panel">
+                    <h3>当前分数</h3>
+                    <div id="currentScore" class="score-display">0</div>
+                </div>
+
+                <div class="high-panel">
+                    <h3>最高分数</h3>
+                    <div id="highScore" class="score-display high">0</div>
+                </div>
+
+                <div class="controls">
+                    <h3>操作说明</h3>
+                    <ul class="control-list">
+                        <li><kbd>↑↓←→</kbd> 或 <kbd>WASD</kbd> - 移动</li>
+                        <li><kbd>空格键</kbd> - 暂停/继续</li>
+                        <li><kbd>R</kbd> - 重新开始</li>
+                    </ul>
+                </div>
+
+                <div class="game-status">
+                    <div id="statusMessage" class="status-text">准备开始</div>
+                    <button id="startBtn" class="btn start">开始游戏</button>
+                    <button id="pauseBtn" class="btn pause" style="display:none;">继续</button>
+                    <button id="restartBtn" class="btn restart" style="display:none;">重新开始</button>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <canvas id="gameCanvas" width="600" height="600"></canvas>
+            </div>
+        </div>
+
+        <footer>
+            <p>贪吃蛇游戏 v1.0 | Cat Uncle's Dev Studio</p>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

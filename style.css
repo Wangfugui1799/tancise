@@ -1,0 +1,257 @@
+/* 贪吃蛇游戏样式 - 深色主题 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* 头部样式 */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: #4ade80;
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #a0a0a0;
+    font-size: 0.9rem;
+}
+
+/* 主游戏区域布局 */
+.game-wrapper {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* 左侧面板 */
+.side-panel {
+    flex: 1;
+    min-width: 280px;
+    max-width: 320px;
+}
+
+.score-panel, .high-panel, .controls, .game-status {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.score-panel h3, .high-panel h3, .controls h3 {
+    color: #4ade80;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.score-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.score-display.high {
+    color: #fbbf24;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+.score-display.animate {
+    transform: scale(1.2);
+    color: #4ade80;
+}
+
+/* 控制说明 */
+.control-list {
+    list-style: none;
+}
+
+.control-list li {
+    margin: 8px 0;
+    font-size: 0.9rem;
+    color: #c0c0c0;
+}
+
+.control-list kbd {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: monospace;
+    font-weight: bold;
+    color: #fff;
+    margin: 0 3px;
+}
+
+/* 游戏状态和按钮 */
+.game-status {
+    text-align: center;
+}
+
+.status-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    min-height: 30px;
+    color: #4ade80;
+}
+
+.status-text.error {
+    color: #ef4444;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.status-text.pause {
+    color: #fbbf24;
+}
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 5px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn.start {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: #1a1a2e;
+}
+
+.btn.pause {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1a1a2e;
+}
+
+.btn.restart {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+}
+
+/* 游戏画布区域 */
+.game-area {
+    flex: 0 0 auto;
+}
+
+#gameCanvas {
+    border-radius: 12px;
+    box-shadow:
+        0 0 30px rgba(74, 222, 128, 0.2),
+        inset 0 0 20px rgba(0, 0, 0, 0.5);
+    background: #0f1419;
+    border: 2px solid rgba(74, 222, 128, 0.3);
+    display: block;
+}
+
+/* 底部 */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #666;
+    font-size: 0.8rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    .game-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .side-panel {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    #gameCanvas {
+        width: 100%;
+        max-width: 500px;
+        height: auto;
+    }
+
+    .score-display {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .score-display {
+        font-size: 1.8rem;
+    }
+
+    .btn {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}
+
+/* 动画效果 */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.pulse {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 10px rgba(74, 222, 128, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(74, 222, 128, 0.8); }
+}
+
+.glow {
+    animation: glow 1.5s ease-in-out infinite;
+}
